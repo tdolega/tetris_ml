@@ -44,7 +44,10 @@ GAMEINFO_LEN = FIELD_LEN + 2
 ACTIONS = {
     'left': 'a',
     'right': 'd',
-    'rotate': 'r',
+    'rotate': 'w',
+    # 'harddrop': 'h',
+    # 'saveCheckpoint': 's',
+    # 'restoreCheckpoint': 'r',
 }
 
 PIECE_NAMES = 'ILJSZTO'

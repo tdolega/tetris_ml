@@ -27,7 +27,7 @@ def getGameInfo():
     field = np.frombuffer(info, np.uint8, FIELD_LEN)
     field.shape = (FIELD_HEIGHT, FIELD_WIDTH)
 
-    # logging.debug('received(%d):\n  field: \n%s\n  currPiece: %s\n  nextPiece: %s', len(info), field, currPiece, nextPiece)
+    logging.debug('received(%d):\n  field: \n%s\n  currPiece: %s\n  nextPiece: %s', len(info), field, currPiece, nextPiece)
     return (currPiece, nextPiece, field)
     
 
