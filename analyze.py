@@ -29,3 +29,11 @@ def getMetrics(field):
     logging.debug('bumpiness: %d', bumpiness)
 
     return (highestPeak, aggregatedHeight, bumpiness)
+
+
+def getFitness(field):
+    (highestPeak, aggregatedHeight, bumpiness) = getMetrics(field)
+    return -1 * highestPeak      \
+         + -1 * aggregatedHeight \
+         + -1 * bumpiness
+    

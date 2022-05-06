@@ -1,3 +1,4 @@
+import torch.nn as nn
 from globalSetting import *
 
 class Network(nn.Module):

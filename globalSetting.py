@@ -45,16 +45,17 @@ ACTIONS = {
     'left': 'a',
     'right': 'd',
     'rotate': 'w',
-    # 'harddrop': 'h',
-    # 'saveCheckpoint': 's',
-    # 'restoreCheckpoint': 'r',
+    'harddrop': 'q',
+    'save': 'c',
+    'restore': 'v',
 }
 
-PIECE_NAMES = 'ILJSZTO'
+# tetromino id to name mapping
+TETROMINO_NAMES = 'ILJSZTO'
 
 
 #####               #####
 
-# fix paths
+# create absolute paths
 TETRIS_GAME_RUN_PATH = os.path.join(os.path.dirname(__file__), TETRIS_GAME_RUN_PATH)
 TETRIS_GAME_EXE_PATH = os.path.join(os.path.dirname(__file__), TETRIS_GAME_EXE_PATH)
