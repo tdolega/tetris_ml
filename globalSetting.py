@@ -29,8 +29,10 @@ import random
 import os
 import numpy as np
 
+# LOG_LEVEL = logging.DEBUG
+LOG_LEVEL = logging.INFO
 LOG_FORMAT = "%(levelname)s> %(message)s"
-logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
+logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT)
 
 # gamefield size
 FIELD_WIDTH = 10

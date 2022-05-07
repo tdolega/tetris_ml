@@ -4,11 +4,12 @@ from simulator import getBestMoves
 from connector import startGame, sendKeystrokes
 
 def mainLoop():
+    logging.info('='*30)
+    
     bestMoves = getBestMoves()
     sendKeystrokes(bestMoves)
 
     time.sleep(.1)
-    logging.debug('='*30)
 
 if __name__ == "__main__":
     os.setpgrp() # create new process group

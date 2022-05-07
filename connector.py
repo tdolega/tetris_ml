@@ -33,16 +33,16 @@ def getGameInfo():
     return (currTetromino, nextTetromino, field)
 
 def startGame():
-    logging.debug('starting game')
+    logging.info('starting game')
     subprocess.Popen(
         executable=TETRIS_GAME_EXE_PATH,
         args=TETRIS_GAME_PARAMS,
         cwd=TETRIS_GAME_RUN_PATH,
     )
 
-    logging.debug('waiting for game input pipe..')
+    logging.info('waiting for game input pipe..')
     while not os.path.exists(inputName):
         time.sleep(.1)
-    logging.debug('waiting for game output pipe..')
+    logging.info('waiting for game output pipe..')
     while not os.path.exists(outputName):
         time.sleep(.1)
