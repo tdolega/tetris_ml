@@ -20,20 +20,16 @@ def getMetrics(field):
     peaks = getPeaks(field)
 
     highestPeak = np.max(peaks)
-    logging.debug('highestPeak: %d', highestPeak)
 
     aggregatedHeight = np.sum(peaks)
-    logging.debug('aggregatedHeight: %d', aggregatedHeight)
 
     bumpiness = getBumpiness(peaks)
-    logging.debug('bumpiness: %d', bumpiness)
 
     return (highestPeak, aggregatedHeight, bumpiness)
 
+METRICS_NAMES = ['highestPeak', 'aggregatedHeight', 'bumpiness']
 
-def getFitness(field):
-    (highestPeak, aggregatedHeight, bumpiness) = getMetrics(field)
-    return -1 * highestPeak      \
-         + -1 * aggregatedHeight \
-         + -1 * bumpiness
+def getScore(model, field):
+    metrics = getMetrics(field)
+    return model.activate(np.array(metrics))
     

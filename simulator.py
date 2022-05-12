@@ -1,6 +1,5 @@
 from globalSetting import *
-from connector import *
-from analyze import getFitness
+from analyze import getScore
 
 # how many rotations of tetromino we need to check
 def rotatesToCheck(tetromino):
@@ -20,44 +19,46 @@ def shiftsToCheck(tetromino):
         case _:
             return (4, 4)
 
-# simulate all possible moves, and return best combination
-bestScore = 0
-bestMoves = ''
-def getBestMoves():
-    global bestScore, bestMoves
-    bestScore = -10000 # todo: this is not nice
-    bestMoves = ''
+class Simulator:
+    def __init__(self, conn, child_model):
+        self.conn = conn
+        self.child_model = child_model
 
-    currTetromino, nextTetromino, _ = getGameInfo() # todo: use nextTetromino
-    shiftsLeft, shiftsRight = shiftsToCheck(currTetromino)
-
-    sendKeystrokes(ACTIONS['save'])
-    getGameInfo() # we need to do this useless read, to make game tick. This is not nice.
-    for rotates in range(rotatesToCheck(currTetromino)):
-        check(rotates, 0, 0)
-        for sl in range(1, shiftsLeft + 1):
-            check(rotates, sl, 0)
-        for sr in range(1, shiftsRight + 1):
-            check(rotates, 0, sr)
-
-    logging.debug('best keystrokes: %s', bestMoves)
-    return bestMoves
-
-# simulate move, and update best score
-def check(rotates, shiftsLeft, shiftsRight):
-    keystrokes = ACTIONS['restore']              \
-               + ACTIONS['rotate'] * rotates     \
-               + ACTIONS['left']   * shiftsLeft  \
-               + ACTIONS['right']  * shiftsRight \
-               + ACTIONS['harddrop']
-
-    sendKeystrokes(keystrokes)
-    _, _, field = getGameInfo()
-    score = getFitness(field)
-
-    global bestScore, bestMoves
-    if score > bestScore:
-        bestScore = score
-        bestMoves = keystrokes
-
+    # simulate all possible moves, and return best combination
+    def getBestMoves(self, currTetromino, nextTetromino): #TODO use nextTetromino
+        self.bestScore = np.NINF
+        self.bestMoves = ''
     
+        self.conn.sendKeystrokes(ACTIONS['save'] + ACTIONS['stopDrawing'])
+        self.conn.getGameInfo()
+
+        shiftsLeft, shiftsRight = shiftsToCheck(currTetromino)
+        for rotates in range(rotatesToCheck(currTetromino)):
+            self.check(rotates, 0, 0)
+            for sl in range(1, shiftsLeft + 1):
+                self.check(rotates, sl, 0)
+            for sr in range(1, shiftsRight + 1):
+                self.check(rotates, 0, sr)
+
+        self.conn.sendKeystrokes(ACTIONS['restore'] + ACTIONS['startDrawing'])
+        self.conn.getGameInfo()
+
+        return self.bestMoves
+
+    # simulate move, and update best score
+    def check(self, rotates, shiftsLeft, shiftsRight):
+        keystrokes = ACTIONS['rotate'] * rotates     \
+                + ACTIONS['left']   * shiftsLeft  \
+                + ACTIONS['right']  * shiftsRight \
+                + ACTIONS['harddrop']
+
+        self.conn.sendKeystrokes(ACTIONS['restore'] + keystrokes)
+        _, _, field, _, isGameOver = self.conn.getGameInfo()
+        if isGameOver:
+            return
+            
+        score = getScore(self.child_model, field)
+
+        if score > self.bestScore:
+            self.bestScore = score
+            self.bestMoves = keystrokes

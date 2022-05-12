@@ -1,48 +1,87 @@
 import subprocess
+import signal
+
 from globalSetting import *
 
-# send keystrokes to game
-def sendKeystrokes(keystrokes):
-    outCon = open(outputName, 'w')
-    outCon.write(keystrokes)
-    outCon.close()
-    logging.debug('sent(%d): %s', len(keystrokes), keystrokes)
+class Connector:
+    def __init__(self, idx):
+        self.idx = str(idx)
+        self.outputName = OUTPUT_NAME + self.idx
+        self.inputName = INPUT_NAME + self.idx
 
-# get game field and score from game
-def getGameInfo():
-    # get info from the game
-    inCon = open(inputName, "rb")
-    info = inCon.read()
-    inCon.close()
+    def startGame(self):
+        logging.debug('starting game')
+        self.processHandle = subprocess.Popen(
+            cwd=TETRIS_GAME_RUN_PATH,
+            executable=TETRIS_GAME_EXE_PATH,
+            args=['p', self.idx],
+            shell=True
+        )
 
-    if(len(info) != GAMEINFO_LEN):
-        logging.critical('field len %d != %d', len(field), GAMEINFO_LEN)
-        exit(1)
+        logging.debug('waiting for game input pipe..')
+        while not os.path.exists(self.inputName):
+            time.sleep(.1)
+        logging.debug('waiting for game output pipe..')
+        while not os.path.exists(self.outputName):
+            time.sleep(.1)
 
-    # unpack tetrominos
-    currTetrominoIdx = info[FIELD_LEN + 0]
-    nextTetrominoIdx = info[FIELD_LEN + 1]
-    currTetromino = TETROMINO_NAMES[currTetrominoIdx]
-    nextTetromino = TETROMINO_NAMES[nextTetrominoIdx]
+    def kill(self):
+        if self.processHandle:
+            self.processHandle.kill()
+        else:
+            logging.error('killing game failed: cannot get process handle')
 
-    # unpack field
-    field = np.frombuffer(info, np.uint8, FIELD_LEN)
-    field.shape = (FIELD_HEIGHT, FIELD_WIDTH)
+    # get game field and score from game
+    def getGameInfo(self):
+        # get info from the game
+        inCon = open(self.inputName, "rb")
+        info = inCon.read()
+        inCon.close()
 
-    logging.debug('received(%d):\n  field: \n%s\n  currTetromino: %s\n  nextTetromino: %s', len(info), field, currTetromino, nextTetromino)
-    return (currTetromino, nextTetromino, field)
+        if(len(info) != GAMEINFO_LEN):
+            logging.critical('field len %d != %d', len(info), GAMEINFO_LEN)
+            exit(1)
 
-def startGame():
-    logging.info('starting game')
-    subprocess.Popen(
-        executable=TETRIS_GAME_EXE_PATH,
-        args=TETRIS_GAME_PARAMS,
-        cwd=TETRIS_GAME_RUN_PATH,
-    )
+        # unpack tetrominos
+        currTetrominoIdx = info[FIELD_LEN + 0]
+        nextTetrominoIdx = info[FIELD_LEN + 1]
+        currTetromino = TETROMINO_NAMES[currTetrominoIdx]
+        nextTetromino = TETROMINO_NAMES[nextTetrominoIdx]
 
-    logging.info('waiting for game input pipe..')
-    while not os.path.exists(inputName):
-        time.sleep(.1)
-    logging.info('waiting for game output pipe..')
-    while not os.path.exists(outputName):
-        time.sleep(.1)
+        scoreString = info[FIELD_LEN + 2:FIELD_LEN + 12]
+        score = int(scoreString)
+
+        isGameOver = info[FIELD_LEN + 12] == ord('N')
+
+        # unpack field
+        field = np.frombuffer(info, np.uint8, FIELD_LEN)
+        field.shape = (FIELD_HEIGHT, FIELD_WIDTH)
+
+        logging.debug('received(%d):\n  field: \n%s\n  currTetromino: %s\n  nextTetromino: %s', len(info), field, currTetromino, nextTetromino)
+        return (currTetromino, nextTetromino, field, score, isGameOver)
+
+    # send keystrokes to game
+    def sendKeystrokes(self, keystrokes):
+        outCon = open(self.outputName, 'w')
+        outCon.write(keystrokes)
+        logging.debug('sent(%d): %s', len(keystrokes), keystrokes)
+        outCon.close()
+
+    def sendKeystrokesSlow(self, keystrokes):
+        for i, key in enumerate(keystrokes):
+            outCon = open(self.outputName, 'w')
+            outCon.write(key) # TODO try not close
+            logging.debug('sent(%d): %s', len(key), key)
+            outCon.close()
+            time.sleep(0.05)
+            if i < len(keystrokes) - 1:
+                self.getGameInfo()
+
+def runAsUnixPgroup(func):
+    os.setpgrp() # create new process group
+    try:
+        func()
+    except Exception as e:
+        logging.critical(e)        
+    finally:
+        os.killpg(0, signal.SIGKILL) # kill all game processes on error
