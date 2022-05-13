@@ -22,7 +22,6 @@ TETRIS_GAME_EXE_PATH = '../game/SFML_TETRIS/cmake-build-release/SFML_TETRIS'
 #####      ai       #####
 
 # network
-N_INPUT_SIZE = 3
 N_OUTPUT_SIZE = 1
 N_WEIGHTS_INIT_MAX = 1
 N_WEIGHTS_INIT_MIN = -N_WEIGHTS_INIT_MAX

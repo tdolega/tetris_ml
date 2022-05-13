@@ -1,4 +1,5 @@
 from globalSetting import *
+from analyze import N_INPUT_SIZE
 
 class Network(torch.nn.Module):
     def __init__(self, output_w=None):

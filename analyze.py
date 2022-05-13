@@ -11,10 +11,20 @@ def getPeaks(area):
     return peaks
 
 def getBumpiness(peaks):
-    s = 0
-    for i in range(9):
-        s += np.abs(peaks[i] - peaks[i + 1])
-    return s
+    bumps = 0
+    for i in range(FIELD_WIDTH - 1):
+        bumps += np.abs(peaks[i] - peaks[i + 1])
+    return bumps
+
+def getHoles(field, peaks):
+    holesPerCol = []
+    for col in range(field.shape[1]):
+        start = -int(peaks[col])
+        if start == 0: # no blocks in this column
+            holesPerCol.append(0)
+        else:
+            holesPerCol.append(np.count_nonzero(field[start:, col] == 0))
+    return holesPerCol
     
 def getMetrics(field):
     peaks = getPeaks(field)
@@ -25,9 +35,14 @@ def getMetrics(field):
 
     bumpiness = getBumpiness(peaks)
 
-    return (highestPeak, aggregatedHeight, bumpiness)
+    holesPerCol = getHoles(field, peaks)
+    holes = np.sum(holesPerCol)
+    colsWithHoles = np.count_nonzero(np.array(holesPerCol) > 0)
 
-METRICS_NAMES = ['highestPeak', 'aggregatedHeight', 'bumpiness']
+    return (highestPeak, aggregatedHeight, bumpiness, holes, colsWithHoles)
+
+METRICS_NAMES = ['highestPeak', 'aggregatedHeight', 'bumpiness', 'holes', 'colsWithHoles']
+N_INPUT_SIZE = len(METRICS_NAMES)
 
 def getScore(model, field):
     metrics = getMetrics(field)
