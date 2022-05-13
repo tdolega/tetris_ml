@@ -71,7 +71,7 @@ class Connector:
             written = self.outCon.write(key + '\n')
             self.outCon.flush()
             logging.debug('sent(%d): %s', written, key)
-            time.sleep(0.05)
+            time.sleep(0.1)
             if i < len(keystrokes) - 1:
                 self.getGameInfo()
 

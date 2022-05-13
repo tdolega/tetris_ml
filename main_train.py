@@ -34,8 +34,8 @@ def training(epoch, child_index, child_model):
     conn.kill()
 
     fitness = np.average(scores)
-    fitnessDiff = ((max(scores) - min(scores)) / fitness) if fitness else 0
-    logging.info("epoch %2d child %2d -> avg fitness %6d ±%2d%%" % (epoch, child_index, fitness, fitnessDiff))
+    fitnessDiff = 100*((max(scores) - min(scores)) / fitness) if fitness else 0
+    logging.info("epoch %2d child %2d -> fitness %6d ± %d%%" % (epoch, child_index, fitness, fitnessDiff))
 
     return fitness
 

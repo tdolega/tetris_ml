@@ -78,4 +78,4 @@ TETRIS_GAME_EXE_PATH = os.path.join(os.path.dirname(__file__), TETRIS_GAME_EXE_P
 
 # TMP
 
-# WORKERS_AMOUNT = 12
+# WORKERS_AMOUNT = P_SIZE
