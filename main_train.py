@@ -17,18 +17,18 @@ def training(epoch, child_index, child_model):
     sim = Simulator(conn, child_model)
 
     run = 0
-    while run < RUNS_PER_CHILD:
+    while True:
         currTetromino, nextTetromino, _, score, isGameOver = conn.getGameInfo()
 
         if isGameOver or score >= MAX_SCORE:
             scores.append(score)
             conn.sendKeystrokes(ACTIONS['reset'])
             run += 1
-            continue
+            if run < RUNS_PER_CHILD:
+                continue
+            break
 
-        bestMoves = sim.getBestMoves(currTetromino, nextTetromino)
-        if len(bestMoves) == 0: # every move is losing
-            bestMoves = ACTIONS['harddrop']
+        bestMoves = sim.getBestMoves(currTetromino)
         conn.sendKeystrokes(bestMoves)
 
     conn.kill()

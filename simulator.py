@@ -40,14 +40,14 @@ class Simulator:
         self.child_model = child_model
 
     # simulate all possible moves, and return best combination
-    def getBestMoves(self, currTetromino, nextTetromino): #TODO use nextTetromino
+    def getBestMoves(self, currTetromino, nextTetromino = None):
         self.bestScore = np.NINF
         self.bestMoves = ''
     
         self.conn.sendKeystrokes(ACTIONS['save'] + ACTIONS['stopDrawing'])
         self.conn.getGameInfo()
 
-        if USE_NEXT_PIECE:
+        if nextTetromino:
             for currKeystrokes in allKeystrokesCombinations(currTetromino):
                 for nextKeystrokes in allKeystrokesCombinations(nextTetromino):
                     self.check(currKeystrokes, nextKeystrokes)
@@ -58,6 +58,9 @@ class Simulator:
         self.conn.sendKeystrokes(ACTIONS['restore'] + ACTIONS['startDrawing'])
         self.conn.getGameInfo()
 
+        if len(self.bestMoves) == 0: # every move is losing
+            return ACTIONS['harddrop']
+            
         return self.bestMoves
 
     def check(self, currKeystrokes, nextKeystrokes = ''):
