@@ -91,8 +91,7 @@ def train():
         if maxFitness >= maxFitnessEver:
             maxFitnessEver = maxFitness
             # save best model
-            filename = datetime.strftime(datetime.now(), '%d_%H_%M_') + str(maxFitness)
-            torch.save(population.models[bestModelIdx].state_dict(), 'models/%s' % filename)
+            torch.save(population.models[bestModelIdx].state_dict(), 'models/%d' % maxFitness)
 
         epoch += 1
 

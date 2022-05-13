@@ -9,14 +9,15 @@ from multiprocessing import cpu_count
 ##### configuration #####
 
 MAX_SCORE = 999999
-USE_NEXT_PIECE = True
+USE_NEXT_PIECE = False
 
 # pipes
 INPUT_NAME = '/tmp/biai_output_' # game output, AI input
 OUTPUT_NAME = '/tmp/biai_input_' # AI output, game input
 
 TETRIS_GAME_RUN_PATH = '../game/SFML_TETRIS'
-TETRIS_GAME_EXE_PATH = '../game/SFML_TETRIS/cmake-build-debug/SFML_TETRIS'
+# TETRIS_GAME_EXE_PATH = '../game/SFML_TETRIS/cmake-build-debug/SFML_TETRIS'
+TETRIS_GAME_EXE_PATH = '../game/SFML_TETRIS/cmake-build-release/SFML_TETRIS'
 
 #####      ai       #####
 
@@ -50,7 +51,7 @@ FIELD_UPPER_BUFFER = 4
 FIELD_PLAYABLE_HEIGHT = 20
 FIELD_HEIGHT = FIELD_PLAYABLE_HEIGHT + FIELD_UPPER_BUFFER
 FIELD_LEN = FIELD_WIDTH * FIELD_HEIGHT
-GAMEINFO_LEN = FIELD_LEN + 2 + 10 + 1
+GAMEINFO_LEN = FIELD_LEN + 2 + 10 + 1 + 1
 
 # game actions mapping
 ACTIONS = {

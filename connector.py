@@ -18,12 +18,15 @@ class Connector:
             shell=True
         )
 
-        logging.debug('waiting for game input pipe..')
-        while not os.path.exists(self.inputName):
-            time.sleep(.1)
         logging.debug('waiting for game output pipe..')
         while not os.path.exists(self.outputName):
             time.sleep(.1)
+        self.outCon = open(self.outputName, 'w')
+
+        logging.debug('waiting for game input pipe..')
+        while not os.path.exists(self.inputName):
+            time.sleep(.1)
+        self.inCon = open(self.inputName, 'rb')
 
     def kill(self):
         if self.processHandle:
@@ -34,9 +37,7 @@ class Connector:
     # get game field and score from game
     def getGameInfo(self):
         # get info from the game
-        inCon = open(self.inputName, "rb")
-        info = inCon.read()
-        inCon.close()
+        info = self.inCon.readline()
 
         if(len(info) != GAMEINFO_LEN):
             logging.critical('field len %d != %d', len(info), GAMEINFO_LEN)
@@ -60,23 +61,19 @@ class Connector:
         logging.debug('received(%d):\n  field: \n%s\n  currTetromino: %s\n  nextTetromino: %s', len(info), field, currTetromino, nextTetromino)
         return (currTetromino, nextTetromino, field, score, isGameOver)
 
-    # send keystrokes to game
     def sendKeystrokes(self, keystrokes):
-        outCon = open(self.outputName, 'w')
-        outCon.write(keystrokes)
-        logging.debug('sent(%d): %s', len(keystrokes), keystrokes)
-        outCon.close()
+        written = self.outCon.write(keystrokes + '\n')
+        self.outCon.flush()
+        logging.debug('sent(%d): %s', written, keystrokes)
 
     def sendKeystrokesSlow(self, keystrokes):
-        outCon = open(self.outputName, 'w')
         for i, key in enumerate(keystrokes):
-            written = outCon.write(key + '\n')
-            outCon.flush()
+            written = self.outCon.write(key + '\n')
+            self.outCon.flush()
             logging.debug('sent(%d): %s', written, key)
             time.sleep(0.05)
             if i < len(keystrokes) - 1:
                 self.getGameInfo()
-        outCon.close()
 
 def runAsUnixPgroup(func):
     os.setpgrp() # create new process group

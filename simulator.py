@@ -47,7 +47,7 @@ class Simulator:
         self.conn.sendKeystrokes(ACTIONS['save'] + ACTIONS['stopDrawing'])
         self.conn.getGameInfo()
 
-        if nextTetromino:
+        if USE_NEXT_PIECE and nextTetromino:
             for currKeystrokes in allKeystrokesCombinations(currTetromino):
                 for nextKeystrokes in allKeystrokesCombinations(nextTetromino):
                     self.check(currKeystrokes, nextKeystrokes)
