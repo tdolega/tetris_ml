@@ -19,6 +19,21 @@ def shiftsToCheck(tetromino):
         case _:
             return (4, 4)
 
+def keystrokesStr(rotates, shiftsLeft, shiftsRight):
+    return ACTIONS['rotate'] * rotates     \
+         + ACTIONS['left']   * shiftsLeft  \
+         + ACTIONS['right']  * shiftsRight \
+         + ACTIONS['harddrop']
+
+def allKeystrokesCombinations(tetromino):
+    shiftsLeft, shiftsRight = shiftsToCheck(tetromino)
+    for rotates in range(rotatesToCheck(tetromino)):
+        yield keystrokesStr(rotates, 0, 0)
+        for sl in range(1, shiftsLeft + 1):
+            yield keystrokesStr(rotates, sl, 0)
+        for sr in range(1, shiftsRight + 1):
+            yield keystrokesStr(rotates, 0, sr)
+
 class Simulator:
     def __init__(self, conn, child_model):
         self.conn = conn
@@ -32,27 +47,21 @@ class Simulator:
         self.conn.sendKeystrokes(ACTIONS['save'] + ACTIONS['stopDrawing'])
         self.conn.getGameInfo()
 
-        shiftsLeft, shiftsRight = shiftsToCheck(currTetromino)
-        for rotates in range(rotatesToCheck(currTetromino)):
-            self.check(rotates, 0, 0)
-            for sl in range(1, shiftsLeft + 1):
-                self.check(rotates, sl, 0)
-            for sr in range(1, shiftsRight + 1):
-                self.check(rotates, 0, sr)
+        if USE_NEXT_PIECE:
+            for currKeystrokes in allKeystrokesCombinations(currTetromino):
+                for nextKeystrokes in allKeystrokesCombinations(nextTetromino):
+                    self.check(currKeystrokes, nextKeystrokes)
+        else:
+            for keystrokes in allKeystrokesCombinations(currTetromino):
+                self.check(keystrokes)
 
         self.conn.sendKeystrokes(ACTIONS['restore'] + ACTIONS['startDrawing'])
         self.conn.getGameInfo()
 
         return self.bestMoves
 
-    # simulate move, and update best score
-    def check(self, rotates, shiftsLeft, shiftsRight):
-        keystrokes = ACTIONS['rotate'] * rotates     \
-                + ACTIONS['left']   * shiftsLeft  \
-                + ACTIONS['right']  * shiftsRight \
-                + ACTIONS['harddrop']
-
-        self.conn.sendKeystrokes(ACTIONS['restore'] + keystrokes)
+    def check(self, currKeystrokes, nextKeystrokes = ''):
+        self.conn.sendKeystrokes(ACTIONS['restore'] + currKeystrokes + nextKeystrokes)
         _, _, field, _, isGameOver = self.conn.getGameInfo()
         if isGameOver:
             return
@@ -61,4 +70,4 @@ class Simulator:
 
         if score > self.bestScore:
             self.bestScore = score
-            self.bestMoves = keystrokes
+            self.bestMoves = currKeystrokes

@@ -3,7 +3,7 @@ from ai import Network
 from connector import Connector, runAsUnixPgroup
 from simulator import Simulator
 
-MODEL_FILENAME = '11_23_47_80900.0'
+MODEL_FILENAME = '12_18_04_81366.66666666667'
 
 def play(model):
     conn = Connector(-1)
@@ -17,6 +17,8 @@ def play(model):
             continue
 
         bestMoves = sim.getBestMoves(currTetromino, nextTetromino)
+
+        # conn.sendKeystrokes(bestMoves)
         conn.sendKeystrokesSlow(bestMoves)
 
 def main():

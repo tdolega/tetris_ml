@@ -68,14 +68,15 @@ class Connector:
         outCon.close()
 
     def sendKeystrokesSlow(self, keystrokes):
+        outCon = open(self.outputName, 'w')
         for i, key in enumerate(keystrokes):
-            outCon = open(self.outputName, 'w')
-            outCon.write(key) # TODO try not close
-            logging.debug('sent(%d): %s', len(key), key)
-            outCon.close()
+            written = outCon.write(key + '\n')
+            outCon.flush()
+            logging.debug('sent(%d): %s', written, key)
             time.sleep(0.05)
             if i < len(keystrokes) - 1:
                 self.getGameInfo()
+        outCon.close()
 
 def runAsUnixPgroup(func):
     os.setpgrp() # create new process group

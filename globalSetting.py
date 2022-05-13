@@ -9,6 +9,7 @@ from multiprocessing import cpu_count
 ##### configuration #####
 
 MAX_SCORE = 999999
+USE_NEXT_PIECE = True
 
 # pipes
 INPUT_NAME = '/tmp/biai_output_' # game output, AI input
@@ -76,4 +77,4 @@ TETRIS_GAME_EXE_PATH = os.path.join(os.path.dirname(__file__), TETRIS_GAME_EXE_P
 
 # TMP
 
-WORKERS_AMOUNT = 12
+# WORKERS_AMOUNT = 12
