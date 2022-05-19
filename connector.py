@@ -43,7 +43,7 @@ class Connector:
             logging.critical('field len %d != %d', len(info), GAMEINFO_LEN)
             exit(1)
 
-        # unpack tetrominos
+        # unpack tetrominoes
         currTetrominoIdx = info[FIELD_LEN + 0]
         nextTetrominoIdx = info[FIELD_LEN + 1]
         currTetromino = TETROMINO_NAMES[currTetrominoIdx]

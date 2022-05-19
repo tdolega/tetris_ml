@@ -45,7 +45,7 @@ class Simulator:
         self.bestMoves = ''
     
         self.conn.sendKeystrokes(ACTIONS['save'] + ACTIONS['stopDrawing'])
-        self.conn.getGameInfo()
+        _, _, _, pointsBefore, _ = self.conn.getGameInfo()
 
         if USE_NEXT_PIECE and nextTetromino:
             for currKeystrokes in allKeystrokesCombinations(currTetromino):
@@ -53,7 +53,7 @@ class Simulator:
                     self.check(currKeystrokes, nextKeystrokes)
         else:
             for keystrokes in allKeystrokesCombinations(currTetromino):
-                self.check(keystrokes)
+                self.check(keystrokes, pointsBefore)
 
         self.conn.sendKeystrokes(ACTIONS['restore'] + ACTIONS['startDrawing'])
         self.conn.getGameInfo()
@@ -63,13 +63,13 @@ class Simulator:
             
         return self.bestMoves
 
-    def check(self, currKeystrokes, nextKeystrokes = ''):
+    def check(self, currKeystrokes, pointsBefore = 0, nextKeystrokes = ''):
         self.conn.sendKeystrokes(ACTIONS['restore'] + currKeystrokes + nextKeystrokes)
-        _, _, field, _, isGameOver = self.conn.getGameInfo()
+        _, _, field, pointsAfter, isGameOver = self.conn.getGameInfo()
         if isGameOver:
             return
-            
-        score = getScore(self.child_model, field)
+        pointsDiff = pointsAfter - pointsBefore
+        score = getScore(self.child_model, field, pointsDiff)
 
         if score > self.bestScore:
             self.bestScore = score

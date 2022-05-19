@@ -15,9 +15,11 @@ USE_NEXT_PIECE = False
 INPUT_NAME = '/tmp/biai_output_' # game output, AI input
 OUTPUT_NAME = '/tmp/biai_input_' # AI output, game input
 
-TETRIS_GAME_RUN_PATH = '../game/SFML_TETRIS'
-# TETRIS_GAME_EXE_PATH = '../game/SFML_TETRIS/cmake-build-debug/SFML_TETRIS'
-TETRIS_GAME_EXE_PATH = '../game/SFML_TETRIS/cmake-build-release/SFML_TETRIS'
+TETRIS_GAME_RUN_PATH = '../SFML_TETRIS/SFML_TETRIS'             # Marcin
+TETRIS_GAME_EXE_PATH = '../SFML_TETRIS/SFML_TETRIS/SFML_TETRIS' # Marcin
+# TETRIS_GAME_RUN_PATH = '../game/SFML_TETRIS'                                  # Tymek
+# # TETRIS_GAME_EXE_PATH = '../game/SFML_TETRIS/cmake-build-debug/SFML_TETRIS'  # Tymek
+# TETRIS_GAME_EXE_PATH = '../game/SFML_TETRIS/cmake-build-release/SFML_TETRIS'  # Tymek
 
 #####      ai       #####
 
@@ -35,7 +37,7 @@ WORKERS_AMOUNT = cpu_count()
 P_ELITISM = 0.25
 P_MUTATION = 0.25
 P_WEIGHTS_MUTATE_POWER = 0.5
-P_SIZE = 50
+P_SIZE = 20
 
 #####               #####
 
