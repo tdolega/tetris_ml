@@ -50,7 +50,7 @@ class Simulator:
         if USE_NEXT_PIECE and nextTetromino:
             for currKeystrokes in allKeystrokesCombinations(currTetromino):
                 for nextKeystrokes in allKeystrokesCombinations(nextTetromino):
-                    self.check(currKeystrokes, nextKeystrokes)
+                    self.check(currKeystrokes, pointsBefore, nextKeystrokes)
         else:
             for keystrokes in allKeystrokesCombinations(currTetromino):
                 self.check(keystrokes, pointsBefore)
@@ -68,6 +68,7 @@ class Simulator:
         _, _, field, pointsAfter, isGameOver = self.conn.getGameInfo()
         if isGameOver:
             return
+            
         pointsDiff = pointsAfter - pointsBefore
         score = getScore(self.child_model, field, pointsDiff)
 

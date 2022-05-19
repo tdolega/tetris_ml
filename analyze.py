@@ -87,5 +87,3 @@ N_INPUT_SIZE = len(METRICS_NAMES)
 def getScore(model, field, pointsDiff):
     metrics = getMetrics(field, pointsDiff)
     return model.activate(np.array(metrics))
-
-    
