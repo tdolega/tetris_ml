@@ -1,6 +1,7 @@
 import pickle
 from multiprocessing import Pool
 from datetime import datetime
+import operator
 
 from globalSetting import *
 from ai import Population
@@ -59,6 +60,10 @@ def train():
                     population = pickle.load(f)
         else:
             population = Population(P_SIZE, population)
+
+        fitnesses, models = zip(*sorted(zip(population.fitnesses, population.models), reverse=True, key=operator.itemgetter(0)))
+        population.fitnesses = np.asarray(fitnesses)
+        population.models = list(models)
 
         workers = []
         for i in range(P_SIZE):
