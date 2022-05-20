@@ -24,6 +24,7 @@ TETRIS_GAME_EXE_PATH = '../game/SFML_TETRIS/cmake-build-release/SFML_TETRIS'  # 
 #####      ai       #####
 
 # network
+N_MIDDLE_SIZE = 4
 N_OUTPUT_SIZE = 1
 N_WEIGHTS_INIT_MAX = 1
 N_WEIGHTS_INIT_MIN = -N_WEIGHTS_INIT_MAX
@@ -80,3 +81,5 @@ TETRIS_GAME_EXE_PATH = os.path.join(os.path.dirname(__file__), TETRIS_GAME_EXE_P
 # TMP
 
 # WORKERS_AMOUNT = P_SIZE
+# RUNS_PER_CHILD = 3
+# P_SIZE = 10

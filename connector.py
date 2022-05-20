@@ -1,5 +1,6 @@
 import subprocess
 import signal
+import traceback
 
 from globalSetting import *
 
@@ -80,6 +81,7 @@ def runAsUnixPgroup(func):
     try:
         func()
     except Exception as e:
-        logging.critical(e)        
+        logging.critical(e)
+        logging.critical(traceback.format_exc())
     finally:
         os.killpg(0, signal.SIGKILL) # kill all game processes on error

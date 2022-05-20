@@ -61,6 +61,7 @@ def train():
         else:
             population = Population(P_SIZE, population)
 
+        # sort old models by fitness, to optimize training speed
         fitnesses, models = zip(*sorted(zip(population.fitnesses, population.models), reverse=True, key=operator.itemgetter(0)))
         population.fitnesses = np.asarray(fitnesses)
         population.models = list(models)
@@ -80,13 +81,20 @@ def train():
         logging.info('Epoch %2d summary:', epoch)
         logging.info(' took %s (%s)', str(epochTook).split(".")[0], str(trainingTook).split(".")[0])
         logging.info(' fitness:')
-        logging.info('  max:  %d' % maxFitness)
-        logging.info('  mean: %d' % np.mean(population.fitnesses))
+        logging.info('  max avg: %d' % maxFitness)
+        logging.info('  mean:    %d' % np.mean(population.fitnesses))
+        
         logging.info(' best weights:')
         bestModelIdx = np.argmax(population.fitnesses)
-        bestModelWeights = population.models[bestModelIdx].output.weight.data.tolist()[0]
-        for i, weight in enumerate(bestModelWeights):
-            logging.info('  %s: %f' % (METRICS_NAMES[i], np.round(weight, 2)))
+        logging.info('    Layer 1:')
+        bestModelMiddleWeights = population.models[bestModelIdx].middle.weight.data.tolist()[0]
+        for i, weight in enumerate(bestModelMiddleWeights):
+            logging.info('      %s: %f' % (METRICS_NAMES[i], round(weight, 2)))
+        logging.info('    Layer 2:')
+        bestModelOutputWeights = population.models[bestModelIdx].output.weight.data.tolist()[0]
+        for i, weight in enumerate(bestModelOutputWeights):
+            logging.info('      %s: %f' % (i, round(weight, 2)))
+
         logging.info('#' * 50)
 
         # make checkpoint

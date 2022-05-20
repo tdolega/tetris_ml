@@ -3,7 +3,7 @@ from ai import Network
 from connector import Connector, runAsUnixPgroup
 from simulator import Simulator
 
-MODEL_FILENAME = '102133'
+MODEL_FILENAME = '137700'
 
 def play(model):
     conn = Connector(-1)
