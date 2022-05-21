@@ -10,12 +10,17 @@ class Connector:
         self.outputName = OUTPUT_NAME + self.idx
         self.inputName = INPUT_NAME + self.idx
 
-    def startGame(self):
+    def startGame(self, displayMode = False):
         logging.debug('starting game')
+
+        gameArgs = ['p', self.idx]
+        if displayMode:
+            gameArgs.append('d')
+
         self.processHandle = subprocess.Popen(
             cwd=TETRIS_GAME_RUN_PATH,
             executable=TETRIS_GAME_EXE_PATH,
-            args=['p', self.idx],
+            args=gameArgs,
             shell=True
         )
 
