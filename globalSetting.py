@@ -66,6 +66,7 @@ ACTIONS = {
     'reset': 'r',
     'stopDrawing': '[',
     'startDrawing': ']',
+    'displayModeOn': 'o'
 }
 
 # tetromino id to name mapping

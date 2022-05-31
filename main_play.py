@@ -4,10 +4,11 @@ from connector import Connector, runAsUnixPgroup
 from simulator import Simulator
 
 MODEL_FILENAME = '137700'
+displayMode=True
 
 def play(model):
     conn = Connector(-1)
-    conn.startGame()
+    conn.startGame(displayMode)
     sim = Simulator(conn, model)
     while True:
         currTetromino, nextTetromino, _, score, isGameOver = conn.getGameInfo()
