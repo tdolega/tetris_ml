@@ -80,6 +80,10 @@ def train():
         epochTook = datetime.now() - tEpochStart
         trainingTook = datetime.now() - tTrainingStart
         mean = np.mean(population.fitnesses)
+        bestModelIdx = np.argmax(population.fitnesses)
+
+        maxAvgs.append(maxFitness)
+        means.append(mean)
 
         logging.info('#' * 50)
         logging.info('Epoch %2d summary:', epoch)
@@ -88,20 +92,6 @@ def train():
         logging.info('  max avg: %d' % maxFitness)
         logging.info('  mean:    %d' % mean)
         
-        logging.info(' best weights:')
-        bestModelIdx = np.argmax(population.fitnesses)
-        logging.info('    Layer 1:')
-        bestModelMiddleWeights = population.models[bestModelIdx].middle.weight.data.tolist()[0]
-        for i, weight in enumerate(bestModelMiddleWeights):
-            logging.info('      %s: %.2f' % (METRICS_NAMES[i], weight))
-        logging.info('    Layer 2:')
-        bestModelOutputWeights = population.models[bestModelIdx].output.weight.data.tolist()[0]
-        for i, weight in enumerate(bestModelOutputWeights):
-            logging.info('      %s: %.2f' % (i, weight))
-
-        maxAvgs.append(maxFitness)
-        means.append(mean)
-
         logging.info('maxAvgs: ' + " ".join(map(str, maxAvgs)))
         if len(maxAvgs) > 1:
             logging.info('diff: %d', maxAvgs[-1] - maxAvgs[-2])

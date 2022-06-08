@@ -9,19 +9,22 @@ class Network(torch.nn.Module):
             logging.critical('`ouput_w` defined, but shouldn\'t. Bailing out')
             exit(2)
 
-        self.middle = torch.nn.Linear(N_INPUT_SIZE, N_MIDDLE_SIZE, bias=False).to(N_DEVICE)
-        self.output = torch.nn.Linear(N_MIDDLE_SIZE, N_OUTPUT_SIZE, bias=False).to(N_DEVICE)
-        self.middle.weight.requires_grad_(False)
-        self.output.weight.requires_grad_(False)
-        torch.nn.init.uniform_(self.middle.weight, a=N_WEIGHTS_INIT_MIN, b=N_WEIGHTS_INIT_MAX)
-        torch.nn.init.uniform_(self.output.weight, a=N_WEIGHTS_INIT_MIN, b=N_WEIGHTS_INIT_MAX)
+        self.layer1 = torch.nn.Linear(N_INPUT_SIZE, N_MIDDLE_SIZE, bias=False)
+        self.layer2 = torch.nn.Linear(N_MIDDLE_SIZE, N_OUTPUT_SIZE, bias=False)
+        self.layer1.weight.requires_grad_(False)
+        self.layer2.weight.requires_grad_(False)
+
+        self.seq = torch.nn.Sequential(
+                self.layer1,
+                torch.nn.ReLU(),
+                self.layer2,
+                # torch.nn.Softmax()
+            )
 
     def activate(self, values):
         with torch.no_grad():
             values = torch.from_numpy(values).float().to(N_DEVICE)
-            middle = self.middle(values)
-            out = self.output(middle)
-            return out
+            return self.seq(values)
 
 class Population:
     def __init__(self, size, lastPopulation=None):
@@ -51,12 +54,15 @@ class Population:
             modelA, modelB = self.lastModels[randA], self.lastModels[randB]
             modelNext = Network()
 
-            for inputIdx in range(N_INPUT_SIZE):
-                randomModel = np.random.choice([modelA, modelB])
-                modelNext.middle.weight.data[0][inputIdx] = randomModel.middle.weight.data[0][inputIdx]
-            for inputIdx in range(N_MIDDLE_SIZE):
-                randomModel = np.random.choice([modelA, modelB])
-                modelNext.output.weight.data[0][inputIdx] = randomModel.output.weight.data[0][inputIdx]
+            for w1 in range(N_MIDDLE_SIZE):
+                for w2 in range(N_INPUT_SIZE):
+                    randomModel = np.random.choice([modelA, modelB])
+                    modelNext.layer1.weight.data[w1][w2] = randomModel.layer1.weight.data[w1][w2]
+
+            for w1 in range(N_OUTPUT_SIZE):
+                for w2 in range(N_MIDDLE_SIZE):
+                    randomModel = np.random.choice([modelA, modelB])
+                    modelNext.layer2.weight.data[w1][w2] = randomModel.layer1.weight.data[w1][w2]
 
             self.models.append(modelNext)
 
@@ -71,7 +77,9 @@ class Population:
     def mutate(self):
         logging.info('Mutating')
         for model in self.models:
-            for i in range(N_INPUT_SIZE):
-                self._mutateSingle(model.middle.weight.data[0][i])
-            for i in range(N_MIDDLE_SIZE):
-                self._mutateSingle(model.output.weight.data[0][i])
+            for w1 in model.layer1.weight.data:
+                for w2 in w1:
+                    self._mutateSingle(w2)
+            for w1 in model.layer2.weight.data:
+                for w2 in w1:
+                    self._mutateSingle(w2)
