@@ -24,7 +24,7 @@ TETRIS_GAME_EXE_PATH = '../game/SFML_TETRIS/cmake-build-release/SFML_TETRIS'  # 
 #####      ai       #####
 
 # network
-N_MIDDLE_SIZE = 4
+N_MIDDLE_SIZE = 3
 N_OUTPUT_SIZE = 1
 N_WEIGHTS_INIT_MAX = 1
 N_WEIGHTS_INIT_MIN = -N_WEIGHTS_INIT_MAX
@@ -37,7 +37,7 @@ WORKERS_AMOUNT = cpu_count()
 # population
 P_ELITISM = 0.25
 P_MUTATION = 0.25
-P_WEIGHTS_MUTATE_POWER = 0.5
+P_WEIGHTS_MUTATE_POWER = 0.1
 P_SIZE = 50
 
 #####               #####

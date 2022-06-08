@@ -49,6 +49,9 @@ def train():
 
     tTrainingStart = datetime.now()
 
+    maxAvgs = []
+    means = []
+
     while epoch < MAX_EPOCHS:
         tEpochStart = datetime.now()
 
@@ -62,9 +65,9 @@ def train():
             population = Population(P_SIZE, population)
 
         # sort old models by fitness, to optimize training speed
-        fitnesses, models = zip(*sorted(zip(population.fitnesses, population.models), reverse=True, key=operator.itemgetter(0)))
-        population.fitnesses = np.asarray(fitnesses)
-        population.models = list(models)
+        # fitnesses, models = zip(*sorted(zip(population.fitnesses, population.models), reverse=True, key=operator.itemgetter(0)))
+        # population.fitnesses = np.asarray(fitnesses)
+        # population.models = list(models)
 
         workers = []
         for i in range(P_SIZE):
@@ -76,24 +79,35 @@ def train():
         maxFitness = np.max(population.fitnesses)
         epochTook = datetime.now() - tEpochStart
         trainingTook = datetime.now() - tTrainingStart
+        mean = np.mean(population.fitnesses)
 
         logging.info('#' * 50)
         logging.info('Epoch %2d summary:', epoch)
         logging.info(' took %s (%s)', str(epochTook).split(".")[0], str(trainingTook).split(".")[0])
         logging.info(' fitness:')
         logging.info('  max avg: %d' % maxFitness)
-        logging.info('  mean:    %d' % np.mean(population.fitnesses))
+        logging.info('  mean:    %d' % mean)
         
         logging.info(' best weights:')
         bestModelIdx = np.argmax(population.fitnesses)
         logging.info('    Layer 1:')
         bestModelMiddleWeights = population.models[bestModelIdx].middle.weight.data.tolist()[0]
         for i, weight in enumerate(bestModelMiddleWeights):
-            logging.info('      %s: %f' % (METRICS_NAMES[i], round(weight, 2)))
+            logging.info('      %s: %.2f' % (METRICS_NAMES[i], weight))
         logging.info('    Layer 2:')
         bestModelOutputWeights = population.models[bestModelIdx].output.weight.data.tolist()[0]
         for i, weight in enumerate(bestModelOutputWeights):
-            logging.info('      %s: %f' % (i, round(weight, 2)))
+            logging.info('      %s: %.2f' % (i, weight))
+
+        maxAvgs.append(maxFitness)
+        means.append(mean)
+
+        logging.info('maxAvgs: ' + " ".join(map(str, maxAvgs)))
+        if len(maxAvgs) > 1:
+            logging.info('diff: %d', maxAvgs[-1] - maxAvgs[-2])
+        logging.info('means: ' +  " ".join(map(str, means)))
+        if len(means) > 1:
+            logging.info('diff: %d', means[-1] - means[-2])
 
         logging.info('#' * 50)
 
