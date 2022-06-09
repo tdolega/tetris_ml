@@ -16,7 +16,7 @@ class Network(torch.nn.Module):
 
         self.seq = torch.nn.Sequential(
                 self.layer1,
-                torch.nn.ReLU(),
+                # torch.nn.ReLU(),
                 self.layer2,
                 # torch.nn.Softmax()
             )
