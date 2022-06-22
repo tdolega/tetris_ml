@@ -18,7 +18,6 @@ OUTPUT_NAME = '/tmp/biai_input_' # AI output, game input
 # TETRIS_GAME_RUN_PATH = '../SFML_TETRIS/SFML_TETRIS'             # Marcin
 # TETRIS_GAME_EXE_PATH = '../SFML_TETRIS/SFML_TETRIS/SFML_TETRIS' # Marcin
 TETRIS_GAME_RUN_PATH = '../game/SFML_TETRIS'                                  # Tymek
-# TETRIS_GAME_EXE_PATH = '../game/SFML_TETRIS/cmake-build-debug/SFML_TETRIS'  # Tymek
 TETRIS_GAME_EXE_PATH = '../game/SFML_TETRIS/cmake-build-release/SFML_TETRIS'  # Tymek
 
 #####      ai       #####
@@ -31,14 +30,14 @@ N_WEIGHTS_INIT_MIN = -N_WEIGHTS_INIT_MAX
 N_DEVICE = 'cpu'
 
 MAX_EPOCHS = 100
-RUNS_PER_CHILD = 3
+RUNS_PER_CHILD = 6
 WORKERS_AMOUNT = cpu_count()
 
 # population
 P_ELITISM = 0.25
 P_MUTATION = 0.25
 P_WEIGHTS_MUTATE_POWER = 0.1
-P_SIZE = 20
+P_SIZE = 100
 
 #####               #####
 
@@ -77,9 +76,3 @@ TETROMINO_NAMES = 'ILJSZTO'
 # create absolute paths
 TETRIS_GAME_RUN_PATH = os.path.join(os.path.dirname(__file__), TETRIS_GAME_RUN_PATH)
 TETRIS_GAME_EXE_PATH = os.path.join(os.path.dirname(__file__), TETRIS_GAME_EXE_PATH)
-
-# TMP
-
-# WORKERS_AMOUNT = P_SIZE
-# RUNS_PER_CHILD = 3
-# P_SIZE = 10

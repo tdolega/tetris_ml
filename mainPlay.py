@@ -3,7 +3,7 @@ from ai import Network
 from connector import Connector, runAsUnixPgroup
 from simulator import Simulator
 
-MODEL_FILENAME = '137700'
+MODEL_FILENAME = 'models/' + 'model.bin' # delete first part (folder) if using provided model
 displayMode=True
 
 def play(model):
@@ -23,7 +23,7 @@ def play(model):
         conn.sendKeystrokesSlow(bestMoves)
 
 def main():
-    modelState = torch.load('models/' + MODEL_FILENAME)
+    modelState = torch.load(MODEL_FILENAME)
     model = Network()
     model.load_state_dict(modelState)
     play(model)
